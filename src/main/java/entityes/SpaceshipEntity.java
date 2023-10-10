@@ -8,7 +8,8 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.List;
 
-@Entity
+@Entity           // Díky tomuto se v MySQL vytvoří daná tabulka, i když tam vůbec není před tím!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                  // Stačí, když mám vytvořené SCHEMA v MySQL Workbench
 @Table(name="spaceship")
 
 @Getter
