@@ -1,0 +1,11 @@
+<hibernate-configuration>
+    <session-factory>
+    <!-- Driver na nějakou DB, jedeme přes JDBC -->
+        <property name = "hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name = "hibernate.connection.url">jdbc:mysql://localhost:3306/mydb</property>
+        <property name = "hibernate.connection.username">root</property>
+        <property name = "hibernate.connection.password">Atos</property>
+        <property name = "hibernate.show_sql">false</property>
+        <property name = "hibernate.hbm2ddl.auto">update</property>
+    </session-factory>
+</hibernate-configuration>
