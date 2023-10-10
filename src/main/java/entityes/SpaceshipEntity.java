@@ -28,8 +28,8 @@ public class SpaceshipEntity {
     // Definujeme vazbu 1:M, tj. že režisér může režírovat více filmů
     // A připojujeme přímo sloupec z druhé tabulky AstronautEntity pomocí JoinColumn
     // Ale jelikož může být výsledkem více filmů (tj. více řádků), tak vytvořit List, tedy kolekci těch AstronautEntity
-    @OneToMany
-    @JoinColumn(name="director_id")
-    List<AstronautEntity> movies;
+//    @OneToMany
+//    @JoinColumn(name="director_id")
+//    List<AstronautEntity> movies;
 
 }
