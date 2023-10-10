@@ -58,6 +58,9 @@ public class AppMain {
     // Do jsonParser zadám cestu k mojemu iss.json. Dát pravý klik na iss.json vlevo v TREE v INTELLIJ, a
     // COPY PATH/REFERENCE - Path from content Root zvolit.
         JsonElement jsonElementPeople = jsonWorker.jsonParser("src/main/iss.json");
+    // Zde volám metodu jsonPersonLoaderToDatabase , která hodí objekty z JSON souboru do DB.
+    // Tyto objekty jsou již pomocí metody jsonParser převedeny do objektu  jsonElementPeople, s kterým pak
+    // může metoda jsonPersonLoaderToDatabase pracovat.
         jsonWorker.jsonPersonLoaderToDatabase(jsonElementPeople);
 
     }
