@@ -9,13 +9,13 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name="a_director")
+@Table(name="spaceship")
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DirectorEntity {
+public class SpaceshipEntity {
 
     @Id
     @Column(name="director_id")
@@ -26,10 +26,10 @@ public class DirectorEntity {
     private String name;
 
     // Definujeme vazbu 1:M, tj. že režisér může režírovat více filmů
-    // A připojujeme přímo sloupec z druhé tabulky MovieEntity pomocí JoinColumn
-    // Ale jelikož může být výsledkem více filmů (tj. více řádků), tak vytvořit List, tedy kolekci těch MovieEntity
+    // A připojujeme přímo sloupec z druhé tabulky AstronautEntity pomocí JoinColumn
+    // Ale jelikož může být výsledkem více filmů (tj. více řádků), tak vytvořit List, tedy kolekci těch AstronautEntity
     @OneToMany
     @JoinColumn(name="director_id")
-    List<MovieEntity> movies;
+    List<AstronautEntity> movies;
 
 }
