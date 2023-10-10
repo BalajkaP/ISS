@@ -18,7 +18,7 @@ import java.util.List;
 public class SpaceshipEntity {
 
     @Id
-    @Column(name="director_id")
+    //@Column(name="director_id")     // Netřeba zadávat
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
