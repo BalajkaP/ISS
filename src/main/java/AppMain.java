@@ -14,7 +14,7 @@ public class AppMain {
         // Define the URL for the API
         String apiUrl = "http://api.open-notify.org/astros.json";
 
-        // Create an HTTP request to the API
+        // Create an HTTP GET request to the API
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create(apiUrl))
                 .build();
