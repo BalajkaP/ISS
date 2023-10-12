@@ -25,8 +25,8 @@ public class AstronautEntity {    // zde už vlastní definice naší ENTITY= ta
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     // Zde je to jméno astronauta
-    @Column(name = "name")
-    private String name;
+    @Column(name = "name")        // název sloupce v tabulce
+    private String name;          // název proměnné pro daný sloupec - je to field v  AstronautEntity
 
 // Zde zadám jméno Craftu, ve kterém jsou astronauti
 // NOVÁ VERZE: ZDE ZADÁM TEN 3. SLOUPEC S NÁZVEM craft, TJ. PŘEVEZMU CELOU DEFINICI SLOUPCE Z SpaceshipEntity

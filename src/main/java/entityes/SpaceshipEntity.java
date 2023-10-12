@@ -19,7 +19,7 @@ import java.util.List;
 public class SpaceshipEntity {
 
     @Id
-    //@Column(name="director_id")     // Netřeba zadávat
+    //@Column(name="spaceship_id")     // Netřeba zadávat. Kdybych zadal, tak se bude jmenovat tak jak zde zadáno
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 

@@ -3,10 +3,13 @@ import java.io.IOException;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import entityes.AstronautEntity;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 
 public class AppMain {
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -51,6 +54,21 @@ public class AppMain {
             System.out.println("HTTP request failed with status code: " + response.statusCode());
         }
 
+        //**********************************************************************************************************
+        //!!!!!!!!!!!!!!!!!!!!!! VOLÁM RŮZNÉ QUERY METODY ULOŽENÉ V CLASS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        // 1.  Retrieve astronauts with craftname "ISS"
+        VariousDbQuery variousDbQuery= new VariousDbQuery();
+        List<AstronautEntity> astronautsWithCraftISS = variousDbQuery.getAstronautsWithCraftISS();
+        for (AstronautEntity astronaut : astronautsWithCraftISS) {
+            System.out.println("Astronaut Name: " + astronaut.getName());
+            System.out.println("Craft Name: " + astronaut.getCraftname());
+        }
+        //----------------------------------------------------------------------------------------------
+        // 2.  Retrieve .............
+
+
+
 //********************************************************************************************************************
     // 2. ZPŮSOB: TENTO KÓD POUŽÍVÁ JIŽ ZTAŽENÝ SOUBOR iss.json, který mám uložený buď někde na disku,
     //            nebo si ho vytvořím přímo zde v resources. Mohu si ho vytvořit tak, že klik na odkaz
@@ -65,7 +83,7 @@ public class AppMain {
 //        JsonElement jsonElementPeople = jsonWorker.jsonParser("src/main/iss.json");
 //    // Zde volám metodu jsonPersonLoaderToDatabase , která hodí objekty z JSON souboru do DB.
 //    // Tyto objekty jsou již pomocí metody jsonParser převedeny do objektu  jsonElementPeople, s kterým pak
-//    // může metoda jsonPersonLoaderToDatabase pracovat.
+//    // může metoda jsonPersonLoaderToDatabase pracovat. Toto řešení navrhl CHAT GPT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!§
 //        jsonWorker.jsonPersonLoaderToDatabase(jsonElementPeople);
 
     }
