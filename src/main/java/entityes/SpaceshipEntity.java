@@ -23,13 +23,13 @@ public class SpaceshipEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name="name")
-    private String name;
+    @Column(name="craftname")  // původně bylo name
+    private String craftname;
 
-    // Definujeme vazbu 1:M, tj. že režisér může režírovat více filmů
+    // Definujeme vazbu 1:M, tj. že spaceship může obsahovat více astronauts
     // A připojujeme přímo sloupec z druhé tabulky AstronautEntity pomocí JoinColumn
     // Ale jelikož může být výsledkem více filmů (tj. více řádků), tak vytvořit List, tedy kolekci těch AstronautEntity
-//    @OneToMany
+      //@OneToMany
 //    @JoinColumn(name="director_id")
 //    List<AstronautEntity> movies;
 
