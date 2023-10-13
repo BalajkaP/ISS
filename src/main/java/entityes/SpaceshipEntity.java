@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,7 +19,8 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SpaceshipEntity {
+// POZOR: U OBOU ENTIT MUSÍ BÝT Serializable, JINAK TO HÁŽE CHYBU !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+public class SpaceshipEntity implements Serializable {
 
     //----------------------------------------------------------------------------
     // Zde Původní verze

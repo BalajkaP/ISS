@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,7 +20,8 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AstronautEntity {    // zde už vlastní definice naší ENTITY= tabulky
+// POZOR: U OBOU ENTIT MUSÍ BÝT Serializable, JINAK TO HÁŽE CHYBU !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+public class AstronautEntity implements Serializable {    // zde už vlastní definice naší ENTITY= tabulky
 
     //----------------------------------------------------------------------------
     // Zde Původní verze
@@ -52,14 +54,14 @@ public class AstronautEntity {    // zde už vlastní definice naší ENTITY= ta
                                         // Náš 3. sloupec zde v AstronautEntity se pak bude jmenovat úplně stejně
     // Zde Join přes craftname v SpaceshipEntity. Je ÚPLNĚ JEDNO PŘES CO JOIN. JDE JEN O TO , CO CHCI VIDĚT VE 3. TABULCE
     // V AstronautEntity si pro tento sloupec vytvořím PROMĚNNOU spaceshift.
-    // SUPER DŮLEŽITÉ: In this code, we're using @JoinColumn with name and referencedColumnName to specify that the
+    // SUPER DŮLEŽITÉ, ale ZATÍM NEFACČÍ: In this code, we're using @JoinColumn with name and referencedColumnName to specify that the
     // craftname column in the AstronautEntity should be related to the craftname column in the SpaceshipEntity.
     // This will ensure that you have string values in the craftname column of the AstronautEntity table, and it will be
     // related to the craftname column in the SpaceshipEntity table.
     // To referencedColumnName musím použít, pokud nejdu přes PK sloupec z té druhé tabulky- tj. kdybych chtěl jako výše použít
     // spaceship_id , tak NETŘEBA POUŽÍT referencedColumnName.
-      @JoinColumn(name = "craftname")
-      //@JoinColumn(name = "craftname", referencedColumnName = "craftname")
+      //@JoinColumn(name = "craftname")
+      @JoinColumn(name = "craftname", referencedColumnName = "craftname")
       private SpaceshipEntity spaceship;  // A pro tento připojený sloupec si deklarujeme jednoduchou proměnnou spaceship,
                                         // protože každý Astronaut má jen 1 ship
 

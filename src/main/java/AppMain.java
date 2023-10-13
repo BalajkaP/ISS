@@ -15,6 +15,10 @@ import java.util.List;
 
 public class AppMain {
     public static void main(String[] args) throws IOException, InterruptedException {
+        // POZOR: Projekt má 2 verze (nejedná se o ty 2 způsoby řešení). JDE O PŮVODNÍ VERZI A NOVOU VERZI.
+        // PŮVODNÍ VERZE je založená na jednoduché definici sloupců v entitách pomocí @Column- žádné vztahy 1:M.
+        // NOVÁ VERZE je založená na implementaci 1:M vztahu pomocí @OneToMany(mappedBy....),@JoinColumn(name = "craftname",...)
+        // anotací.
 
         // DŮLEŽITÉ INFO: NESMÍ BÝT AKTIVNÍ PŘIPOJENÍ Z DB Browser, pokud chci mazat tabulky, nebo jiný QUERY v MySQL Workbench.
         // Jinak dojde ke KONFLIKTU, A ZABLOKUJE WORKBENCH. V TOM PŘÍPADĚ MUSÍM PRAVÝ KLIK NA CONNECTION V DB Browser a dát
@@ -72,13 +76,13 @@ public class AppMain {
 
         // 1.  Retrieve astronauts with craftname "ISS" . POUŽITÍ PŘÍKAZU WHERE.
         // Funguje správně s původní verzí v Entitách, JsonWorker a AppMain
-//        VariousDbQuery variousDbQuery = new VariousDbQuery();
-//        List<AstronautEntity> astronautsWithCraftISS = variousDbQuery.getAstronautsWithCraftISS();
-//        for (AstronautEntity astronaut : astronautsWithCraftISS) {
-//            System.out.println("Astronaut Name: " + astronaut.getName());
-//        //    System.out.println("Craft Name: " + astronaut.getCraftname());  // Toto platí pro původní verzi
-//            System.out.println("Craft Name: " + astronaut.getSpaceship().getCraftname()); // Toto platí pro NOVOU verzi
-//        }
+        VariousDbQuery variousDbQuery = new VariousDbQuery();
+        List<AstronautEntity> astronautsWithCraftISS = variousDbQuery.getAstronautsWithCraftISS();
+        for (AstronautEntity astronaut : astronautsWithCraftISS) {
+            System.out.println("Astronaut Name: " + astronaut.getName());
+        //    System.out.println("Craft Name: " + astronaut.getCraftname());  // Toto platí pro původní verzi
+            System.out.println("Craft Name: " + astronaut.getSpaceship().getCraftname()); // Toto platí pro NOVOU verzi
+        }
         //----------------------------------------------------------------------------------------------
         // 2.  Retrieve .............
 
