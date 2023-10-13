@@ -47,88 +47,82 @@ public class AppMain {
         // Send the HTTP request and get the response
         HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
 
-        // Check if the HTTP request was successful (status code 200)
-        if (response.statusCode() == 200) {
-            // Parse the JSON response
-            String responseBody = response.body();
-            JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
+        try {
+            Session session = DbConnect.getSession();
+            Transaction transaction = session.beginTransaction(); //Begin a new transaction to group database operations together.
+            // Check if the HTTP request was successful (status code 200)
+            if (response.statusCode() == 200) {
+                // Parse the JSON response
+                String responseBody = response.body();
+                JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
 
-            // Create an instance of JsonWorker
-            JsonWorker jsonWorker = new JsonWorker();
+                // Create an instance of JsonWorker
+                JsonWorker jsonWorker = new JsonWorker();
 
-            try {
-                Session session = DbConnect.getSession();
-                Transaction transaction = session.beginTransaction(); //Begin a new transaction to group database operations together.
+
                 // Load the JSON data into the database
                 jsonWorker.jsonPersonLoaderToDatabase(session, jsonObject);
 
-                transaction.commit(); // Commit the transaction, which applies the changes to the database.
-                session.close(); // Close the JPA session to release resources and end the database connection.
-                System.out.println("Data were loaded to the database.");
-            } catch (Exception e) {
-                e.printStackTrace();
+            } else {
+                System.out.println("HTTP request failed with status code: " + response.statusCode());
             }
-
-        } else {
-            System.out.println("HTTP request failed with status code: " + response.statusCode());
-        }
+            transaction.commit(); // Commit the transaction, which applies the changes to the database.
+            System.out.println("Data were loaded to the database.");
 
 
-        //**********************************************************************************************************
-        //!!!!!!!!!!!!!!!!!!!!!! VOLÁM RŮZNÉ QUERY METODY ULOŽENÉ V CLASS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //**********************************************************************************************************
+            //!!!!!!!!!!!!!!!!!!!!!! VOLÁM RŮZNÉ QUERY METODY ULOŽENÉ V CLASS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-        Session session = DbConnect.getSession();   // getSession nám vyrobí Session- taedy naše spojení s DB
-        Transaction transaction = session.beginTransaction();  // Spustím první transakci
-                                                               //Begin a new transaction to group database operations together.
-        //session.begin();
+            //Begin a new transaction to group database operations together.
+            transaction.begin();                         // Spustím druhou transakci té naší session
 
-        // 1.  Retrieve astronauts with craftname "ISS" . POUŽITÍ PŘÍKAZU WHERE.
-        // Funguje správně s původní verzí v Entitách, JsonWorker a AppMain
-        VariousDbQuery variousDbQuery = new VariousDbQuery();
-        // Zde je náš seznam astronautů získaný pomocí HQL
-        List<AstronautEntity> astronautsWithCraftISS = variousDbQuery.getAstronautsWithCraftISS(session);
-        // TOTO DŮLEŽITÉ PRO ULOŽENÍ DO DATABASE. Create a new list to store instances of AstrocraftISSEntity.
-        List<AstrocraftISSEntity> astrocraftISSList = new ArrayList<>();
+            // 1.  Retrieve astronauts with craftname "ISS" . POUŽITÍ PŘÍKAZU WHERE.
+            // Funguje správně s původní verzí v Entitách, JsonWorker a AppMain
+            VariousDbQuery variousDbQuery = new VariousDbQuery();
+            // Zde je náš seznam astronautů získaný pomocí HQL
+            List<AstronautEntity> astronautsWithCraftISS = variousDbQuery.getAstronautsWithCraftISS(session);
+            // TOTO DŮLEŽITÉ PRO ULOŽENÍ DO DATABASE. Create a new list to store instances of AstrocraftISSEntity.
+            List<AstrocraftISSEntity> astrocraftISSList = new ArrayList<>();
 
-        // ZDE PROVEDU VÝSTUPY NA OBRAZOVKU, DO DATABASE , DO SOUBORU
-        for (AstronautEntity astronaut : astronautsWithCraftISS) {
-            // a) Výstup na obrazovku
-            System.out.println("Astronaut Name: " + astronaut.getName());
-            //System.out.println("Craft Name: " + astronaut.getCraftname());  // Toto platí pro původní verzi
-            System.out.println("Craft Name: " + astronaut.getSpaceship().getCraftname()); // Toto platí pro NOVOU verzi
+            // ZDE PROVEDU VÝSTUPY NA OBRAZOVKU, DO DATABASE , DO SOUBORU
+            for (AstronautEntity astronaut : astronautsWithCraftISS) {
+                // a) Výstup na obrazovku
+                System.out.println("Astronaut Name: " + astronaut.getName());
+                //System.out.println("Craft Name: " + astronaut.getCraftname());  // Toto platí pro původní verzi
+                System.out.println("Craft Name: " + astronaut.getSpaceship().getCraftname()); // Toto platí pro NOVOU verzi
 
-            // b) Výstup do databáze
-            // Create a new instance of AstrocraftISSEntity for each astronaut.
-            AstrocraftISSEntity astrocraftISSEntity = new AstrocraftISSEntity();
+                // b) Výstup do databáze
+                // Create a new instance of AstrocraftISSEntity for each astronaut.
+                AstrocraftISSEntity astrocraftISSEntity = new AstrocraftISSEntity();
 
-            // Set the astronaut's name in the AstrocraftISSEntity instance.
-            astrocraftISSEntity.setAstronautName(astronaut.getName());
+                // Set the astronaut's name in the AstrocraftISSEntity instance.
+                astrocraftISSEntity.setAstronautName(astronaut.getName());
 
-            // Set the craft name by accessing it through the associated spaceship in AstronautEntity.
-            astrocraftISSEntity.setCraftName(astronaut.getSpaceship().getCraftname());
+                // Set the craft name by accessing it through the associated spaceship in AstronautEntity.
+                astrocraftISSEntity.setCraftName(astronaut.getSpaceship().getCraftname());
 
-            // Add the populated AstrocraftISSEntity instance to the list.
-            astrocraftISSList.add(astrocraftISSEntity);
+                // Add the populated AstrocraftISSEntity instance to the list.
+                astrocraftISSList.add(astrocraftISSEntity);
 
-            // c) Výstup do souboru
+                // c) Výstup do souboru
 
-        }
-        // Iterate through the list of AstrocraftISSEntity objects. Platí pro Výstup do databáze
-        for (AstrocraftISSEntity astrocraftISSEntity : astrocraftISSList) {
-            // Save the current AstrocraftISSEntity instance to the database.
-            session.save(astrocraftISSEntity);
-        }
-        //----------------------------------------------------------------------------------------------
-        // 2.  Retrieve .............
+            }
+            // Iterate through the list of AstrocraftISSEntity objects. Platí pro Výstup do databáze
+            for (AstrocraftISSEntity astrocraftISSEntity : astrocraftISSList) {
+                // Save the current AstrocraftISSEntity instance to the database.
+                session.save(astrocraftISSEntity);
+            }
+            //----------------------------------------------------------------------------------------------
+            // 2.  Retrieve .............
 
 
 //********************************************************************************************************************
-        // 2. ZPŮSOB: TENTO KÓD POUŽÍVÁ JIŽ ZTAŽENÝ SOUBOR iss.json, který mám uložený buď někde na disku,
-        //            nebo si ho vytvořím přímo zde v resources. Mohu si ho vytvořit tak, že klik na odkaz
-        //            http://api.open-notify.org/astros.json , a zkopíruju jeho obsah.
-        //            Pak v resources vytvořím po pravý klik na main -NEW FILE - iss.json, a do něj zkopíruju obsah
-        //            souboru astros.json. Abych tedy mohl zadat relativní cestu, tak raději ten soubor dát přímo pod main
-        //
+            // 2. ZPŮSOB: TENTO KÓD POUŽÍVÁ JIŽ ZTAŽENÝ SOUBOR iss.json, který mám uložený buď někde na disku,
+            //            nebo si ho vytvořím přímo zde v resources. Mohu si ho vytvořit tak, že klik na odkaz
+            //            http://api.open-notify.org/astros.json , a zkopíruju jeho obsah.
+            //            Pak v resources vytvořím po pravý klik na main -NEW FILE - iss.json, a do něj zkopíruju obsah
+            //            souboru astros.json. Abych tedy mohl zadat relativní cestu, tak raději ten soubor dát přímo pod main
+            //
 
 //        JsonWorker jsonWorker = new JsonWorker();
 //    // Do jsonParser zadám cestu k mojemu iss.json. Dát pravý klik na iss.json vlevo v TREE v INTELLIJ, a
@@ -139,7 +133,10 @@ public class AppMain {
 //    // může metoda jsonPersonLoaderToDatabase pracovat. Toto řešení navrhl CHAT GPT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!§
 //        jsonWorker.jsonPersonLoaderToDatabase(jsonElementPeople);
 
-        transaction.commit();
-        session.close(); // Close the JPA session to release resources and end the database connection.
+            transaction.commit();
+            session.close(); // Close the JPA session to release resources and end the database connection.
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
