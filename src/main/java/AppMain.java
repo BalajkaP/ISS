@@ -4,6 +4,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import entityes.AstronautEntity;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -14,16 +16,16 @@ import java.util.List;
 public class AppMain {
     public static void main(String[] args) throws IOException, InterruptedException {
 
-    // DŮLEŽITÉ INFO: NESMÍ BÝT AKTIVNÍ PŘIPOJENÍ Z DB Browser, pokud chci mazat tabulky, nebo jiný QUERY v MySQL Workbench.
-    // Jinak dojde ke KONFLIKTU, A ZABLOKUJE WORKBENCH. V TOM PŘÍPADĚ MUSÍM PRAVÝ KLIK NA CONNECTION V DB Browser a dát
-    // DISCONNECT
+        // DŮLEŽITÉ INFO: NESMÍ BÝT AKTIVNÍ PŘIPOJENÍ Z DB Browser, pokud chci mazat tabulky, nebo jiný QUERY v MySQL Workbench.
+        // Jinak dojde ke KONFLIKTU, A ZABLOKUJE WORKBENCH. V TOM PŘÍPADĚ MUSÍM PRAVÝ KLIK NA CONNECTION V DB Browser a dát
+        // DISCONNECT
 
-    // ŘEŠENÍ ÚLOHY 2 ZPŮSOBY:
+        // ŘEŠENÍ ÚLOHY 2 ZPŮSOBY:
 
-    // 1. ZPŮSOB: TENTO KÓD VYUŽÍVÁ PŘÍMO HTTP DOTAZ NA DANOU STRÁNKU S API, A TA NÁM VRÁTÍ POŽADOVANÉ ÚDAJE.
-    //            NA TÉTO STRÁNCE UŽ JE VYTVOŘENÉ NĚJAKÉ ROZHRANÍ, KTERÉ KOMUNIKUJE S DB.
-    //            VRÁTÍ NÁM ÚDAJE V SOUBORU TYPU JSON, A TEN MUSÍME ZDE V KÓDU PŘEVÉST (ROZEBRAT, PARSE)
-    //            NA JSON OBJEKT - JsonObject, KTERÝ PAK POMOCÍ JsonWorker TŘÍDY NAHRAJU DO DATABÁZE
+        // 1. ZPŮSOB: TENTO KÓD VYUŽÍVÁ PŘÍMO HTTP DOTAZ NA DANOU STRÁNKU S API, A TA NÁM VRÁTÍ POŽADOVANÉ ÚDAJE.
+        //            NA TÉTO STRÁNCE UŽ JE VYTVOŘENÉ NĚJAKÉ ROZHRANÍ, KTERÉ KOMUNIKUJE S DB.
+        //            VRÁTÍ NÁM ÚDAJE V SOUBORU TYPU JSON, A TEN MUSÍME ZDE V KÓDU PŘEVÉST (ROZEBRAT, PARSE)
+        //            NA JSON OBJEKT - JsonObject, KTERÝ PAK POMOCÍ JsonWorker TŘÍDY NAHRAJU DO DATABÁZE
 
         // Create an instance of HttpClient
         HttpClient httpClient = HttpClient.newHttpClient();
@@ -48,8 +50,19 @@ public class AppMain {
             // Create an instance of JsonWorker
             JsonWorker jsonWorker = new JsonWorker();
 
-            // Load the JSON data into the database
-            jsonWorker.jsonPersonLoaderToDatabase(jsonObject);
+            try {
+                Session session = DbConnect.getSession();
+                Transaction transaction = session.beginTransaction();
+                // Load the JSON data into the database
+                jsonWorker.jsonPersonLoaderToDatabase(session, jsonObject);
+
+                transaction.commit();
+                session.close();
+                System.out.println("Data were loaded to the database.");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         } else {
             System.out.println("HTTP request failed with status code: " + response.statusCode());
         }
@@ -58,24 +71,25 @@ public class AppMain {
         //!!!!!!!!!!!!!!!!!!!!!! VOLÁM RŮZNÉ QUERY METODY ULOŽENÉ V CLASS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         // 1.  Retrieve astronauts with craftname "ISS"
-        VariousDbQuery variousDbQuery= new VariousDbQuery();
-        List<AstronautEntity> astronautsWithCraftISS = variousDbQuery.getAstronautsWithCraftISS();
-        for (AstronautEntity astronaut : astronautsWithCraftISS) {
-            System.out.println("Astronaut Name: " + astronaut.getName());
-            System.out.println("Craft Name: " + astronaut.getCraftname());
-        }
+        // Funguje správně s původní verzí v Entitách, JsonWorker a AppMain
+//        VariousDbQuery variousDbQuery = new VariousDbQuery();
+//        List<AstronautEntity> astronautsWithCraftISS = variousDbQuery.getAstronautsWithCraftISS();
+//        for (AstronautEntity astronaut : astronautsWithCraftISS) {
+//            System.out.println("Astronaut Name: " + astronaut.getName());
+//        //    System.out.println("Craft Name: " + astronaut.getCraftname());  // Toto platí pro původní verzi
+//            System.out.println("Craft Name: " + astronaut.getSpaceship().getCraftname()); // Toto platí pro NOVOU verzi
+//        }
         //----------------------------------------------------------------------------------------------
         // 2.  Retrieve .............
 
 
-
 //********************************************************************************************************************
-    // 2. ZPŮSOB: TENTO KÓD POUŽÍVÁ JIŽ ZTAŽENÝ SOUBOR iss.json, který mám uložený buď někde na disku,
-    //            nebo si ho vytvořím přímo zde v resources. Mohu si ho vytvořit tak, že klik na odkaz
-    //            http://api.open-notify.org/astros.json , a zkopíruju jeho obsah.
-    //            Pak v resources vytvořím po pravý klik na main -NEW FILE - iss.json, a do něj zkopíruju obsah
-    //            souboru astros.json. Abych tedy mohl zadat relativní cestu, tak raději ten soubor dát přímo pod main
-    //
+        // 2. ZPŮSOB: TENTO KÓD POUŽÍVÁ JIŽ ZTAŽENÝ SOUBOR iss.json, který mám uložený buď někde na disku,
+        //            nebo si ho vytvořím přímo zde v resources. Mohu si ho vytvořit tak, že klik na odkaz
+        //            http://api.open-notify.org/astros.json , a zkopíruju jeho obsah.
+        //            Pak v resources vytvořím po pravý klik na main -NEW FILE - iss.json, a do něj zkopíruju obsah
+        //            souboru astros.json. Abych tedy mohl zadat relativní cestu, tak raději ten soubor dát přímo pod main
+        //
 
 //        JsonWorker jsonWorker = new JsonWorker();
 //    // Do jsonParser zadám cestu k mojemu iss.json. Dát pravý klik na iss.json vlevo v TREE v INTELLIJ, a

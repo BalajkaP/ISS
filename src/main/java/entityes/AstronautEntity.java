@@ -21,12 +21,32 @@ import java.util.Set;
 @NoArgsConstructor
 public class AstronautEntity {    // zde už vlastní definice naší ENTITY= tabulky
 
+    //----------------------------------------------------------------------------
+    // Zde Původní verze
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Integer id;
+//    // Zde je to jméno astronauta
+//    @Column(name = "name")        // název sloupce v tabulce
+//    private String name;          // název proměnné pro daný sloupec - je to field v  AstronautEntity
+//    // Zde je to jméno spaceship - je to jen klasické vytvoření sloupce
+//    @Column(name = "craftname")
+//    private String craftname;
+
+    //---------------------------------------------------------------------------
+    // Zde začíná nová verze
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    // Zde je to jméno astronauta
-    @Column(name = "name")        // název sloupce v tabulce
-    private String name;          // název proměnné pro daný sloupec - je to field v  AstronautEntity
+
+    @Column(name = "name")
+    private String name;
+
+    @ManyToOne   // POZOR: Na rozdíl od HIBERNATE1_NEW je zde použito ManyToOne (kdežto v MovieEntity je OneToOne)
+    @JoinColumn(name = "spaceship_id")
+    private SpaceshipEntity spaceship;  // Deklarujeme jednoduchou proměnnou spaceship, protože každý Astronaut má jen 1 ship
+
 
 // Zde zadám jméno Craftu, ve kterém jsou astronauti
 // NOVÁ VERZE: ZDE ZADÁM TEN 3. SLOUPEC S NÁZVEM craft, TJ. PŘEVEZMU CELOU DEFINICI SLOUPCE Z SpaceshipEntity
@@ -35,9 +55,6 @@ public class AstronautEntity {    // zde už vlastní definice naší ENTITY= ta
 //    @JoinColumn(name = "craftname")    // Zde PŘEVEZMU CELOU DEFINICI SLOUPCE Z SpaceshipEntity
 //    SpaceshipEntity craftname;         // Na tuto proměnnou se pak budu v programu odkazovat pro tento sloupec
 
-// ZDE ZADÁM TEN 3. SLOUPEC S NÁZVEM craft - je to jen klasické vytvoření sloupce
-//    Toto je původní varianta
-        @Column(name = "craftname")
-        private String craftname;
+
 
 }

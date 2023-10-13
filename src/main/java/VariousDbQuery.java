@@ -11,8 +11,11 @@ public class VariousDbQuery {
         try {
             Session session = DbConnect.getSession();
             Transaction transaction = session.beginTransaction();
+ //     TOTO PLATÍ PRO PŮVODNÍ VERZI
+ //     List<AstronautEntity> astronauts = session.createQuery("FROM AstronautEntity WHERE craftname = 'ISS'", AstronautEntity.class).list();
 
-            List<AstronautEntity> astronauts = session.createQuery("FROM AstronautEntity WHERE craftname = 'ISS'", AstronautEntity.class).list();
+//      ODSUD UŽ PLATÍ PRO NOVOU VERZI
+            List<AstronautEntity> astronauts = session.createQuery("FROM AstronautEntity WHERE Spaceship.getCraftname() = 'ISS'", AstronautEntity.class).list();
 
             transaction.commit();
             session.close();
