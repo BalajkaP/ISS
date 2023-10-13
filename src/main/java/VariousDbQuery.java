@@ -15,7 +15,7 @@ public class VariousDbQuery {
  //     List<AstronautEntity> astronauts = session.createQuery("FROM AstronautEntity WHERE craftname = 'ISS'", AstronautEntity.class).list();
 
 //      ODSUD UŽ PLATÍ PRO NOVOU VERZI
-            List<AstronautEntity> astronauts = session.createQuery("FROM AstronautEntity WHERE Spaceship.getCraftname() = 'ISS'", AstronautEntity.class).list();
+            List<AstronautEntity> astronauts = session.createQuery("FROM AstronautEntity ae WHERE ae.spaceship = 'ISS'").list();
 
             transaction.commit();
             session.close();

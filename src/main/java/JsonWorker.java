@@ -108,19 +108,42 @@ public class JsonWorker {
             // Extract the "people" array from the JSON object
             JsonArray peopleArray = jsonObject.getAsJsonArray("people");
 
+            // DŮLEŽITÝ KÓD PRO ZAJIŠTĚNÍ UNIKÁTNÍHO VSTUPU
+            // Zde vytvořím kolekci s unikátními záznamy (díky HashMap), která uchovává Mapu těch Key-Value pairs
+            // Map<String, SpaceshipEntity> . Jako KEY si tam ukládám tu string hodnotu "craft" field z Json
+            // a jako Value je příslušný momentálně vzniklý objekt SpaceshipEntity
+            Map<String, SpaceshipEntity> spacecraftMap = new HashMap<>();
+
             // Iterate over the "people" array to extract astronaut names and craft names
             for (JsonElement personElement : peopleArray) {
                 JsonObject personObject = personElement.getAsJsonObject();
                 String name = personObject.get("name").getAsString();
                 String craft = personObject.get("craft").getAsString();
+
                 // Create a new AstronautEntity and set its name
                 AstronautEntity astronaut = new AstronautEntity();
-                astronaut.setName(name);
-                // Create a new SpaceshipEntity and set its craft name
-                SpaceshipEntity spaceship = new SpaceshipEntity();
-                spaceship.setCraftname(craft);
+                astronaut.setName(name); //  DŮLEŽITÉ: Zde netřeba zadávat astronaut.setCraftname(craft), jako
+                // v původní verzi, protože se tento 3.sloupec vytvoří automaticky v
+                // AstronautEntity převzetím z SpaceshipEntity, pomocí @JoinColumn!!!!!!!!!!!!!!!!!!!!!!!!!
+                // Create a new SpaceshipEntity and set its craft name. Toto zde přidám , abych načetl taky SpaceshipEntity
+                //POZOR: VELMI DŮLEŽITÉ: KÓD PRO ZAJIŠTĚNÍ UNIKÁTNÍHO VSTUPU - TJ. ŽE SE NAČTE z Json JEN 1 TYP CRAFTu DO TABULKY!!!!!!!!!!!!!!!!!!!
+//                    // Check if the spaceship entity already exists in the map - pomocí get si zjistím, zda je tam již
+//                    // VALUE (tj.SpaceshipEntity) pro daný unikátní KEY (string).
+                SpaceshipEntity spaceship = spacecraftMap.get(craft);
+//                    // Jen v případě, že daný KEY (craft) není ještě v mapě, tak provede co uvnitř if
+                if (spaceship == null) {
+                    spaceship = new SpaceshipEntity();  // zde vytvoří další objekt SpaceshipEntity= další řádek v tabulce
+                    spaceship.setCraftname(craft);      // a to tak, že nastaví craftname sloupec na daný "craft"
+//                        // PUT: Associates (začlení) the specified value with the specified key in this map (optional operation).
+//                        // Pokud map už obsahovala daný KEY-VALUE pair (tj. mapping for the key), the old value is
+//                        // replaced by the specified value.
+                    spacecraftMap.put(craft, spaceship);
+                }
+                //       SpaceshipEntity spaceship = new SpaceshipEntity(); // Toto stačí když nechci zajistit UNIKÁTNÍ VSTUP
+                //       spaceship.setCraftname(craft);                     // Toto stačí když nechci zajistit UNIKÁTNÍ VSTUP
+
                 // Call the saveSpaceshipAndAstronautsWithRelationship method to establish the relationship
-                saveSpaceshipAndAstronautsWithRelationship(session, spaceship, astronaut );
+                saveSpaceshipAndAstronautsWithRelationship(session, spaceship, astronaut);
             }
 
         } else {

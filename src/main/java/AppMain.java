@@ -70,7 +70,7 @@ public class AppMain {
         //**********************************************************************************************************
         //!!!!!!!!!!!!!!!!!!!!!! VOLÁM RŮZNÉ QUERY METODY ULOŽENÉ V CLASS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-        // 1.  Retrieve astronauts with craftname "ISS"
+        // 1.  Retrieve astronauts with craftname "ISS" . POUŽITÍ PŘÍKAZU WHERE.
         // Funguje správně s původní verzí v Entitách, JsonWorker a AppMain
 //        VariousDbQuery variousDbQuery = new VariousDbQuery();
 //        List<AstronautEntity> astronautsWithCraftISS = variousDbQuery.getAstronautsWithCraftISS();

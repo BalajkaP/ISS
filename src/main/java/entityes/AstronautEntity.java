@@ -43,9 +43,25 @@ public class AstronautEntity {    // zde už vlastní definice naší ENTITY= ta
     @Column(name = "name")
     private String name;
 
+    // ZDE ZADÁM TEN 3. SLOUPEC , TJ. PŘEVEZMU CELOU DEFINICI SLOUPCE Z SpaceshipEntity
+    // Definuji relaci 1:M a taky jak chci název 3. sloupce
+    // To jestli zvolím spaceship_id nebo craftname, NEMÁ VLIV NA JINÝ KÓD. NIC SE NEROZBIJE.
     @ManyToOne   // POZOR: Na rozdíl od HIBERNATE1_NEW je zde použito ManyToOne (kdežto v MovieEntity je OneToOne)
-    @JoinColumn(name = "spaceship_id")
-    private SpaceshipEntity spaceship;  // Deklarujeme jednoduchou proměnnou spaceship, protože každý Astronaut má jen 1 ship
+    // Zde Join přes spaceship_id v SpaceshipEntity
+//    @JoinColumn(name = "spaceship_id")  // A připojujeme přímo sloupec z druhé tabulky SpaceshipEntity pomocí JoinColumn.
+                                        // Náš 3. sloupec zde v AstronautEntity se pak bude jmenovat úplně stejně
+    // Zde Join přes craftname v SpaceshipEntity. Je ÚPLNĚ JEDNO PŘES CO JOIN. JDE JEN O TO , CO CHCI VIDĚT VE 3. TABULCE
+    // V AstronautEntity si pro tento sloupec vytvořím PROMĚNNOU spaceshift.
+    // SUPER DŮLEŽITÉ: In this code, we're using @JoinColumn with name and referencedColumnName to specify that the
+    // craftname column in the AstronautEntity should be related to the craftname column in the SpaceshipEntity.
+    // This will ensure that you have string values in the craftname column of the AstronautEntity table, and it will be
+    // related to the craftname column in the SpaceshipEntity table.
+    // To referencedColumnName musím použít, pokud nejdu přes PK sloupec z té druhé tabulky- tj. kdybych chtěl jako výše použít
+    // spaceship_id , tak NETŘEBA POUŽÍT referencedColumnName.
+      @JoinColumn(name = "craftname")
+      //@JoinColumn(name = "craftname", referencedColumnName = "craftname")
+      private SpaceshipEntity spaceship;  // A pro tento připojený sloupec si deklarujeme jednoduchou proměnnou spaceship,
+                                        // protože každý Astronaut má jen 1 ship
 
 
 // Zde zadám jméno Craftu, ve kterém jsou astronauti
