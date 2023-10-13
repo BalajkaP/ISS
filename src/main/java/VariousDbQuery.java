@@ -7,18 +7,19 @@ import java.util.List;
 public class VariousDbQuery {
 
     // Zde získáme jen astronauty, kteří jsou momentálně přítomni na ISS
-    public List<AstronautEntity> getAstronautsWithCraftISS() {
+    public List<AstronautEntity> getAstronautsWithCraftISS(Session session) {
         try {
-            Session session = DbConnect.getSession();
-            Transaction transaction = session.beginTransaction();
+//            Session session = DbConnect.getSession();
+//            Transaction transaction = session.beginTransaction();
+
  //     TOTO PLATÍ PRO PŮVODNÍ VERZI
  //     List<AstronautEntity> astronauts = session.createQuery("FROM AstronautEntity WHERE craftname = 'ISS'", AstronautEntity.class).list();
 
 //      ODSUD UŽ PLATÍ PRO NOVOU VERZI
             List<AstronautEntity> astronauts = session.createQuery("FROM AstronautEntity ae WHERE ae.spaceship = 'ISS'").list();
 
-            transaction.commit();
-            session.close();
+//            transaction.commit();
+//            session.close();
 
             return astronauts;
 

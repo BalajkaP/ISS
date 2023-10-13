@@ -3,6 +3,7 @@ import java.io.IOException;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import entityes.AstrocraftISSEntity;
 import entityes.AstronautEntity;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -11,6 +12,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AppMain {
@@ -56,12 +58,12 @@ public class AppMain {
 
             try {
                 Session session = DbConnect.getSession();
-                Transaction transaction = session.beginTransaction();
+                Transaction transaction = session.beginTransaction(); //Begin a new transaction to group database operations together.
                 // Load the JSON data into the database
                 jsonWorker.jsonPersonLoaderToDatabase(session, jsonObject);
 
-                transaction.commit();
-                session.close();
+                transaction.commit(); // Commit the transaction, which applies the changes to the database.
+                session.close(); // Close the JPA session to release resources and end the database connection.
                 System.out.println("Data were loaded to the database.");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -71,17 +73,50 @@ public class AppMain {
             System.out.println("HTTP request failed with status code: " + response.statusCode());
         }
 
+
         //**********************************************************************************************************
         //!!!!!!!!!!!!!!!!!!!!!! VOLÁM RŮZNÉ QUERY METODY ULOŽENÉ V CLASS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        Session session = DbConnect.getSession();   // getSession nám vyrobí Session- taedy naše spojení s DB
+        Transaction transaction = session.beginTransaction();  // Spustím první transakci
+                                                               //Begin a new transaction to group database operations together.
+        //session.begin();
 
         // 1.  Retrieve astronauts with craftname "ISS" . POUŽITÍ PŘÍKAZU WHERE.
         // Funguje správně s původní verzí v Entitách, JsonWorker a AppMain
         VariousDbQuery variousDbQuery = new VariousDbQuery();
-        List<AstronautEntity> astronautsWithCraftISS = variousDbQuery.getAstronautsWithCraftISS();
+        // Zde je náš seznam astronautů získaný pomocí HQL
+        List<AstronautEntity> astronautsWithCraftISS = variousDbQuery.getAstronautsWithCraftISS(session);
+        // TOTO DŮLEŽITÉ PRO ULOŽENÍ DO DATABASE. Create a new list to store instances of AstrocraftISSEntity.
+        List<AstrocraftISSEntity> astrocraftISSList = new ArrayList<>();
+
+        // ZDE PROVEDU VÝSTUPY NA OBRAZOVKU, DO DATABASE , DO SOUBORU
         for (AstronautEntity astronaut : astronautsWithCraftISS) {
+            // a) Výstup na obrazovku
             System.out.println("Astronaut Name: " + astronaut.getName());
-        //    System.out.println("Craft Name: " + astronaut.getCraftname());  // Toto platí pro původní verzi
+            //System.out.println("Craft Name: " + astronaut.getCraftname());  // Toto platí pro původní verzi
             System.out.println("Craft Name: " + astronaut.getSpaceship().getCraftname()); // Toto platí pro NOVOU verzi
+
+            // b) Výstup do databáze
+            // Create a new instance of AstrocraftISSEntity for each astronaut.
+            AstrocraftISSEntity astrocraftISSEntity = new AstrocraftISSEntity();
+
+            // Set the astronaut's name in the AstrocraftISSEntity instance.
+            astrocraftISSEntity.setAstronautName(astronaut.getName());
+
+            // Set the craft name by accessing it through the associated spaceship in AstronautEntity.
+            astrocraftISSEntity.setCraftName(astronaut.getSpaceship().getCraftname());
+
+            // Add the populated AstrocraftISSEntity instance to the list.
+            astrocraftISSList.add(astrocraftISSEntity);
+
+            // c) Výstup do souboru
+
+        }
+        // Iterate through the list of AstrocraftISSEntity objects. Platí pro Výstup do databáze
+        for (AstrocraftISSEntity astrocraftISSEntity : astrocraftISSList) {
+            // Save the current AstrocraftISSEntity instance to the database.
+            session.save(astrocraftISSEntity);
         }
         //----------------------------------------------------------------------------------------------
         // 2.  Retrieve .............
@@ -104,5 +139,7 @@ public class AppMain {
 //    // může metoda jsonPersonLoaderToDatabase pracovat. Toto řešení navrhl CHAT GPT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!§
 //        jsonWorker.jsonPersonLoaderToDatabase(jsonElementPeople);
 
+        transaction.commit();
+        session.close(); // Close the JPA session to release resources and end the database connection.
     }
 }
