@@ -161,7 +161,7 @@ public class AppMain {
 //    // Tyto objekty jsou již pomocí metody jsonParser převedeny do objektu  jsonElementPeople, s kterým pak
 //    // může metoda jsonPersonLoaderToDatabase pracovat. Toto řešení navrhl CHAT GPT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!§
 //        jsonWorker.jsonPersonLoaderToDatabase(jsonElementPeople);
-
+// *****************************************************************************************************************
             transaction.commit();
             session.close(); // Close the JPA session to release resources and end the database connection.
         } catch (Exception e) {

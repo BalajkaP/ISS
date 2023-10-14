@@ -143,7 +143,7 @@ public class JsonWorker {
                 //       spaceship.setCraftname(craft);                     // Toto stačí když nechci zajistit UNIKÁTNÍ VSTUP
 
                 // Call the saveSpaceshipAndAstronautsWithRelationship method to establish the relationship
-                // Metoda je níže
+                // Metoda je níže. A v této metodě se provedou i session.save(spaceship) a session.save(astronaut)
                 saveSpaceshipAndAstronautsWithRelationship(session, spaceship, astronaut);
             }
 
