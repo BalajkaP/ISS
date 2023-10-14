@@ -1,3 +1,5 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import com.google.gson.JsonElement;
@@ -76,7 +78,7 @@ public class AppMain {
             //Begin a new transaction to group database operations together.
             transaction.begin();                         // Spustím druhou transakci té naší session
 
-            // 1.  Retrieve astronauts with craftname "ISS" . POUŽITÍ PŘÍKAZU WHERE.
+            // 1.  Retrieve astronauts with craftname "ISS" . POUŽITÍ PŘÍKAZU WHERE. VÝSTUPY NA OBRAZOVKU, DO DATABASE , DO SOUBORU
             // Funguje správně s původní verzí v Entitách, JsonWorker a AppMain
             VariousDbQuery variousDbQuery = new VariousDbQuery();
             // Zde je náš seznam astronautů získaný pomocí HQL
@@ -91,7 +93,7 @@ public class AppMain {
                 //System.out.println("Craft Name: " + astronaut.getCraftname());  // Toto platí pro původní verzi
                 System.out.println("Craft Name: " + astronaut.getSpaceship().getCraftname()); // Toto platí pro NOVOU verzi
 
-                // b) Výstup do databáze
+                // b) Výstup do databáze a souboru - zde jen příprava finálního seznamu pro uložení
                 // Create a new instance of AstrocraftISSEntity for each astronaut.
                 AstrocraftISSEntity astrocraftISSEntity = new AstrocraftISSEntity();
 
@@ -104,14 +106,29 @@ public class AppMain {
                 // Add the populated AstrocraftISSEntity instance to the list.
                 astrocraftISSList.add(astrocraftISSEntity);
 
-                // c) Výstup do souboru
-
             }
-            // Iterate through the list of AstrocraftISSEntity objects. Platí pro Výstup do databáze
+            // Pokračování pro b) - Platí pro Výstup do databáze - viz. b)
+            // Iterate through the list of AstrocraftISSEntity objects.
             for (AstrocraftISSEntity astrocraftISSEntity : astrocraftISSList) {
                 // Save the current AstrocraftISSEntity instance to the database.
                 session.save(astrocraftISSEntity);
             }
+            // c) Výstup do souboru
+            // Pokračování z b)
+            // Specify the path to the output text file
+            String filePath = "output.txt";
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+                for (AstrocraftISSEntity astrocraftISSEntity : astrocraftISSList) {
+                    // Write the data to the text file
+                    writer.write("Astronaut Name: " + astrocraftISSEntity.getAstronautName());
+                    writer.newLine(); // Add a new line
+                    writer.write("Craft Name: " + astrocraftISSEntity.getCraftName());
+                    writer.newLine(); // Add a new line
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             //----------------------------------------------------------------------------------------------
             // 2.  Retrieve .............
 
