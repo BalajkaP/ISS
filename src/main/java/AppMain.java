@@ -116,18 +116,20 @@ public class AppMain {
             // c) Výstup do souboru
             // Pokračování z b)
             // Specify the path to the output text file
-            String filePath = "output.txt";
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-                for (AstrocraftISSEntity astrocraftISSEntity : astrocraftISSList) {
-                    // Write the data to the text file
-                    writer.write("Astronaut Name: " + astrocraftISSEntity.getAstronautName());
-                    writer.newLine(); // Add a new line
-                    writer.write("Craft Name: " + astrocraftISSEntity.getCraftName());
-                    writer.newLine(); // Add a new line
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            String filePath = "C:\\PROGRAMOVANI_SKOLENI\\SKOLENI SDA\\PROGRAMY\\ISS\\src\\main\\java\\files\\astrocraftoutput.txt";
+//
+//            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+//                writer.write("Astronaut Name: ");
+//                for (AstrocraftISSEntity astrocraftISSEntity : astrocraftISSList) {
+//                    // Write the data to the text file
+//                    writer.write("Astronaut Name: " + astrocraftISSEntity.getAstronautName());
+//                    writer.newLine(); // Add a new line
+//                    writer.write("Craft Name: " + astrocraftISSEntity.getCraftName());
+//                    writer.newLine(); // Add a new line
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
 
             //----------------------------------------------------------------------------------------------
             // 2.  Retrieve .............

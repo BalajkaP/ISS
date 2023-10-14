@@ -1,3 +1,4 @@
+import entityes.AstrocraftISSEntity;
 import entityes.SpaceshipEntity;
 import entityes.AstronautEntity;
 import org.hibernate.Session;
@@ -20,7 +21,7 @@ public class DbConnect {
      // configure(): method provided by the Configuration class, uses the properties specified in the mapping file( hibernate.cfg.xml).
                 .addAnnotatedClass(AstronautEntity.class)  // tyto 3 řádky proto, aby si hibernate uměl přečíst anotace daných
                 .addAnnotatedClass(SpaceshipEntity.class) // tabulek a uměl s nimi pracovat
-            //    .addAnnotatedClass(AstrocraftISSEntity.class)
+                .addAnnotatedClass(AstrocraftISSEntity.class)
                 .buildSessionFactory();                // až tímto vytvořím SessionFactory objekt, tj. továrnu na výrobu sessions
   // A SessionFactory object is used to create a Session object, which is lightweight object. The Session object is not
   // threadsafe. It is used to execute CRUD operations (insert, delete, update, edit). It also holds the first-level
