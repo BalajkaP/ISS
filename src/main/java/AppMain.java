@@ -122,7 +122,7 @@ public class AppMain {
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
                 writer.write("Astronaut-Craft Entry: \n" + "\n");
-              //todo dodělat mazání obsahu souboru  writer.........
+              //todo Zde se mazání děje automaticky díky funkci writer.write , protože ta zapisuje od začátku souboru a ne append
                 for (AstrocraftISSEntity astrocraftISSEntity : astrocraftISSList) {
                     // Write the data to the text file
                     writer.write("Astronaut Name: " + astrocraftISSEntity.getAstronautName());
