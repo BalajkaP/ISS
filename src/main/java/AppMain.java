@@ -54,7 +54,7 @@ public class AppMain {
             Transaction transaction = session.beginTransaction(); //Begin a new transaction to group database operations together.
             // Check if the HTTP request was successful (status code 200)
             if (response.statusCode() == 200) {
-                // Parse the JSON response
+                // Parse the JSON response . Zde asi získám přímo ten JSON soubor
                 String responseBody = response.body();
                 JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
 
