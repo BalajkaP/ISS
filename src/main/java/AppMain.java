@@ -19,6 +19,7 @@ import java.util.List;
 
 public class AppMain {
     public static void main(String[] args) throws IOException, InterruptedException {
+        // *********************TENTO PROJEKT VYUŽÍVÁ CIRCLECI**************************
         // POZOR: Projekt má 2 verze (nejedná se o ty 2 způsoby řešení). JDE O PŮVODNÍ VERZI A NOVOU VERZI.
         // PŮVODNÍ VERZE je založená na jednoduché definici sloupců v entitách pomocí @Column- žádné vztahy 1:M.
         // NOVÁ VERZE je založená na implementaci 1:M vztahu pomocí @OneToMany(mappedBy....),@JoinColumn(name = "craftname",...)
