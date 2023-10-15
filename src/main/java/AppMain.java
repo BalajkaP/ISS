@@ -30,10 +30,16 @@ public class AppMain {
 
         // ŘEŠENÍ ÚLOHY 2 ZPŮSOBY:
 
-        // 1. ZPŮSOB: TENTO KÓD VYUŽÍVÁ PŘÍMO HTTP DOTAZ NA DANOU STRÁNKU S API, A TA NÁM VRÁTÍ POŽADOVANÉ ÚDAJE.
-        //            NA TÉTO STRÁNCE UŽ JE VYTVOŘENÉ NĚJAKÉ ROZHRANÍ, KTERÉ KOMUNIKUJE S DB.
-        //            VRÁTÍ NÁM ÚDAJE V SOUBORU TYPU JSON, A TEN MUSÍME ZDE V KÓDU PŘEVÉST (ROZEBRAT, PARSE)
-        //            NA JSON OBJEKT - JsonObject, KTERÝ PAK POMOCÍ JsonWorker TŘÍDY NAHRAJU DO DATABÁZE
+        // 1. ZPŮSOB: TENTO KÓD VYUŽÍVÁ PŘÍMO HTTP DOTAZ NA DANOU URL (STRÁNKU S API), A TA NÁM VRÁTÍ POŽADOVANÉ ÚDAJE.
+        //            NA TÉTO STRÁNCE UŽ JE VYTVOŘENÉ NĚJAKÉ ROZHRANÍ, KTERÉ KOMUNIKUJE S nějakou eterní DB.
+        //            VRÁTÍ NÁM ÚDAJE TYPU JSON - ale ty jsou jako String v responseBody (viz. klasický zápis JSON
+        //            pomocí {} ). TO responseBody MUSÍME ZDE V KÓDU PŘEVÉST (ROZEBRAT, PARSE) pomocí getAsJsonObject NA
+        //            JSON OBJEKT (JsonObject), KTERÝ PAK POMOCÍ JsonWorker TŘÍDY ZPRACUJI A NAHRAJU DO DATABÁZE
+        //            V JsonWorker extrahujeme jednotlivé fields (prvky) z našeho JsonObject (který je zde uložen v poli).
+        // DŮLEŽITÉ: TEN 2.ZPŮSOB (VIZ. NÍŽE) FUNGUJE VELICE PODOBNĚ, JEN ZÍSKÁNÍ JsonObject JE JINÉ - TEDY TA PRVNÍ ČÁST.
+        //           V TOMTO PŘÍPADĚ, Z LOKÁLNÍHO ZKOPÍROVANÉHO JSON SOUBORU, POMOCÍ jsonParser() PŘEVEDE SOUBOR TYPU
+        //           JSON NA JsonObject= JsonElement. ZPRACOVÁNÍ PAK STEJNĚ JAKO U 1.ZPŮSOBU POMOCÍ METODY jsonPersonLoaderToDatabase
+        //           Z JsonWorker.
 
         // Create an instance of HttpClient
         HttpClient httpClient = HttpClient.newHttpClient();
@@ -54,7 +60,7 @@ public class AppMain {
             Transaction transaction = session.beginTransaction(); //Begin a new transaction to group database operations together.
             // Check if the HTTP request was successful (status code 200)
             if (response.statusCode() == 200) {
-                // Parse the JSON response . Zde asi získám přímo ten JSON soubor
+                // Parse the JSON response . Z response.body zde získám přímo ten JSON soubor (JsonObject).
                 String responseBody = response.body();
                 JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
 
@@ -79,7 +85,7 @@ public class AppMain {
             transaction.begin();                         // Spustím druhou transakci té naší session
 
             // 1.  Retrieve astronauts with craftname "ISS" . POUŽITÍ PŘÍKAZU WHERE. VÝSTUPY NA OBRAZOVKU, DO DATABASE , DO SOUBORU
-            // Funguje správně s původní verzí v Entitách, JsonWorker a AppMain
+            //       Využívám metodu: getAstronautsWithCraftISS
             VariousDbQuery variousDbQuery = new VariousDbQuery();
             // Zde je náš seznam astronautů získaný pomocí HQL
             List<AstronautEntity> astronautsWithCraftISS = variousDbQuery.getAstronautsWithCraftISS(session);
@@ -122,7 +128,7 @@ public class AppMain {
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
                 writer.write("Astronaut-Craft Entry: \n" + "\n");
-              //todo Zde se mazání děje automaticky díky funkci writer.write , protože ta zapisuje od začátku souboru a ne append
+                //todo Zde se mazání děje automaticky díky funkci writer.write , protože ta zapisuje od začátku souboru a ne append
                 for (AstrocraftISSEntity astrocraftISSEntity : astrocraftISSList) {
                     // Write the data to the text file
                     writer.write("Astronaut Name: " + astrocraftISSEntity.getAstronautName());
@@ -135,8 +141,9 @@ public class AppMain {
             }
 
             //----------------------------------------------------------------------------------------------
-            // 2.  Retrieve .............
-
+            // 2. DELETE astronaut with specified name.
+            // POUŽITÍ PŘÍKAZU: session.createQuery("DELETE FROM AstronautEntity ae WHERE ae.astronautName = :name AND ae.craftName = 'ISS'")
+    //      boolean resstate = variousDbQuery.deleteAstronautByNameWithCraftISS(session, "Jasmin Moghbeli");
 
 //********************************************************************************************************************
             // 2. ZPŮSOB: TENTO KÓD POUŽÍVÁ JIŽ ZTAŽENÝ SOUBOR iss.json, který mám uložený buď někde na disku,
@@ -154,7 +161,7 @@ public class AppMain {
 //    // Tyto objekty jsou již pomocí metody jsonParser převedeny do objektu  jsonElementPeople, s kterým pak
 //    // může metoda jsonPersonLoaderToDatabase pracovat. Toto řešení navrhl CHAT GPT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!§
 //        jsonWorker.jsonPersonLoaderToDatabase(jsonElementPeople);
-
+// *****************************************************************************************************************
             transaction.commit();
             session.close(); // Close the JPA session to release resources and end the database connection.
         } catch (Exception e) {
