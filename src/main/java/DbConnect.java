@@ -8,7 +8,10 @@ import org.hibernate.cfg.Configuration;
 
 public class DbConnect {
 
-    public static Session getSession() {       // vrací objekt typu Session - tj. to vlastní napojení našeho PC na DB
+    public static Session getSession() {
+                String dbUsername= System.getenv("MYSQLDB_USER");
+                String dbPassword= System.getenv("MYSQLDB_PASSWORD");
+  // vrací objekt typu Session - tj. to vlastní napojení našeho PC na DB
   // Configuration is class, which consists of the properties and function files of Hibernate. The configuration object is
   // created only once during the application initialization. Configuration patří do org.hibernate.cfg.Configuration package.
   // Klasicky by se objekt vytvořil takto: Configuration cfg=new Configuration() a pak bych přečetl both mapping and configuration file
@@ -19,6 +22,8 @@ public class DbConnect {
         SessionFactory sessionFactory = new Configuration()  // Jde o návrhový vzor: BUILDER , jde o tečkovou konvenci
                 .configure("hibernate.cfg.xml")  // Odkaz na náš konfigurační soubor, pomocí jeho dat vytvoříme konfiguraci
                                                          // pro naše připojení k DB
+                .setProperty("hibernate.connection.username", dbUsername)
+                .setProperty("hibernate.connection.password", dbPassword)
      // configure(): method provided by the Configuration class, uses the properties specified in the mapping file( hibernate.cfg.xml).
                 .addAnnotatedClass(AstronautEntity.class)  // tyto 3 řádky proto, aby si hibernate uměl přečíst anotace daných
                 .addAnnotatedClass(SpaceshipEntity.class) // tabulek a uměl s nimi pracovat

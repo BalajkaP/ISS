@@ -5,8 +5,10 @@
         <property name = "hibernate.connection.url">jdbc:mysql://localhost:3306/issdb</property>
 
         <!-- Use environment variables for username and password -->
-        <property name="hibernate.connection.username">root</property>
-        <property name="hibernate.connection.password">Atos</property>
+<!--        <property name="hibernate.connection.username">root</property>-->
+<!--        <property name="hibernate.connection.password">Atos</property>-->
+        <property name="hibernate.connection.username">${MYSQLDB_USER}</property>
+        <property name="hibernate.connection.password">${MYSQLDB_PASSWORD}</property>
 
         <property name = "hibernate.show_sql">false</property>
         <property name = "hibernate.hbm2ddl.auto">update</property>
